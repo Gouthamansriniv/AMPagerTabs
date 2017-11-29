@@ -3,7 +3,7 @@
 //  AMPagerTabs
 //
 //  Created by abedalkareem omreyh on 11/29/17.
-//  Copyright © 2017 Sharq. All rights reserved.
+//  Copyright © 2017 abedalkareem omreyh. All rights reserved.
 //
 
 import UIKit
@@ -15,7 +15,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+       
+        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
+        UINavigationBar.appearance().shadowImage = UIImage()
+
+        
         return true
     }
 

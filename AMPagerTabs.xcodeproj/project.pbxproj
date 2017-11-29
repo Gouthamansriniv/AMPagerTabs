@@ -12,6 +12,9 @@
 		C68D40F11FCEBDC6003D2F05 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C68D40EF1FCEBDC6003D2F05 /* Main.storyboard */; };
 		C68D40F31FCEBDC6003D2F05 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C68D40F21FCEBDC6003D2F05 /* Assets.xcassets */; };
 		C68D40F61FCEBDC6003D2F05 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C68D40F41FCEBDC6003D2F05 /* LaunchScreen.storyboard */; };
+		C68D41031FCEBE72003D2F05 /* AMLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68D41001FCEBE71003D2F05 /* AMLineView.swift */; };
+		C68D41041FCEBE72003D2F05 /* AMTabButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68D41011FCEBE71003D2F05 /* AMTabButton.swift */; };
+		C68D41051FCEBE72003D2F05 /* AMPagerTabsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68D41021FCEBE71003D2F05 /* AMPagerTabsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +25,9 @@
 		C68D40F21FCEBDC6003D2F05 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C68D40F51FCEBDC6003D2F05 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C68D40F71FCEBDC6003D2F05 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C68D41001FCEBE71003D2F05 /* AMLineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMLineView.swift; sourceTree = "<group>"; };
+		C68D41011FCEBE71003D2F05 /* AMTabButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMTabButton.swift; sourceTree = "<group>"; };
+		C68D41021FCEBE71003D2F05 /* AMPagerTabsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMPagerTabsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,10 +62,37 @@
 			children = (
 				C68D40EB1FCEBDC6003D2F05 /* AppDelegate.swift */,
 				C68D40ED1FCEBDC6003D2F05 /* ViewController.swift */,
+				C68D40FF1FCEBE44003D2F05 /* AMPagerTabs */,
+				C68D40FD1FCEBDCF003D2F05 /* Screens */,
+				C68D40FE1FCEBDDA003D2F05 /* SupportFiles */,
+			);
+			path = AMPagerTabs;
+			sourceTree = "<group>";
+		};
+		C68D40FD1FCEBDCF003D2F05 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
 				C68D40EF1FCEBDC6003D2F05 /* Main.storyboard */,
-				C68D40F21FCEBDC6003D2F05 /* Assets.xcassets */,
 				C68D40F41FCEBDC6003D2F05 /* LaunchScreen.storyboard */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		C68D40FE1FCEBDDA003D2F05 /* SupportFiles */ = {
+			isa = PBXGroup;
+			children = (
 				C68D40F71FCEBDC6003D2F05 /* Info.plist */,
+				C68D40F21FCEBDC6003D2F05 /* Assets.xcassets */,
+			);
+			path = SupportFiles;
+			sourceTree = "<group>";
+		};
+		C68D40FF1FCEBE44003D2F05 /* AMPagerTabs */ = {
+			isa = PBXGroup;
+			children = (
+				C68D41001FCEBE71003D2F05 /* AMLineView.swift */,
+				C68D41011FCEBE71003D2F05 /* AMTabButton.swift */,
+				C68D41021FCEBE71003D2F05 /* AMPagerTabsViewController.swift */,
 			);
 			path = AMPagerTabs;
 			sourceTree = "<group>";
@@ -137,6 +170,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				C68D40EE1FCEBDC6003D2F05 /* ViewController.swift in Sources */,
+				C68D41051FCEBE72003D2F05 /* AMPagerTabsViewController.swift in Sources */,
+				C68D41041FCEBE72003D2F05 /* AMTabButton.swift in Sources */,
+				C68D41031FCEBE72003D2F05 /* AMLineView.swift in Sources */,
 				C68D40EC1FCEBDC6003D2F05 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -276,9 +312,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = H3MRF55H66;
-				INFOPLIST_FILE = AMPagerTabs/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/AMPagerTabs/SupportFiles/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = sharq.AMPagerTabs;
+				PRODUCT_BUNDLE_IDENTIFIER = abedalkareem.AMPagerTabs;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -291,9 +328,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = H3MRF55H66;
-				INFOPLIST_FILE = AMPagerTabs/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/AMPagerTabs/SupportFiles/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = sharq.AMPagerTabs;
+				PRODUCT_BUNDLE_IDENTIFIER = abedalkareem.AMPagerTabs;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
