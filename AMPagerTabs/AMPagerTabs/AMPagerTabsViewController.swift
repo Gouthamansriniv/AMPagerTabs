@@ -1,63 +1,78 @@
 //
 //  AMTabViewController.swift
-//  EMS
+//  AMPagerTabs
 //
 //  Created by abedalkareem omreyh on 10/26/17.
 //  Copyright © 2017 abedalkareem omreyh. All rights reserved.
+//  GitHub: https://github.com/Abedalkareem/AMPagerTabs
 //
 
 import UIKit
 
 class AMPagerTabsViewController: UIViewController {
 
-    private var tabScrollView:UIScrollView!
-    private var containerScrollView:UIScrollView!
+    private var tabScrollView: UIScrollView!
+    private var containerScrollView: UIScrollView!
     
-    var delegate:AMPagerTabsViewControllerDelegate?
+    private var tabButtons: [AMTabButton] = []
+    private var line = AMLineView()
+    private var lastSelectedViewIndex = 0
+    
+    /// The object that acts as the delegate of the `AMPagerTabsViewController`.
+    var delegate: AMPagerTabsViewControllerDelegate?
+    /// The property that hold the style and settings for the `AMPagerTabsViewController`.
+    let settings = AMSettings()
 
-    var viewControllers:[UIViewController] = [] {
-        willSet{
+    /// The `ViewContollers` you want to show in the tabs.
+    var viewControllers: [UIViewController] = [] {
+        willSet {
             checkIfCanChangeValue(withErrorMessage: "You can't set the viewControllers twice")
         }
-        didSet{
+        didSet {
             addTabButtons()
-            moveTo(index: firstSelectedTabIndex)
+            moveToViewContollerAt(index: firstSelectedTabIndex)
         }
     }
     
+    /// The first selected item when the tabs loaded.
     var firstSelectedTabIndex = 0 {
-        willSet{
+        willSet {
             checkIfCanChangeValue(withErrorMessage: "You must set the first selected tab index before set the viewcontrollers")
         }
     }
     
-    var tabFont:UIFont = UIFont.systemFont(ofSize: 17) {
-        willSet{
+    /// The custom font for the tab title.
+    var tabFont: UIFont = UIFont.systemFont(ofSize: 17) {
+        willSet {
             checkIfCanChangeValue(withErrorMessage: "You must set the font before set the viewcontrollers")
         }
     }
     
+    /// A Boolean value that indicates if the tabs should fit in the screen
+    /// or should go out of the screen. `true` is the default.
     var isTabButtonShouldFit = false {
-        willSet{
+        willSet {
             checkIfCanChangeValue(withErrorMessage: "You must set the isTabButtonShouldFit before set the viewcontrollers")
         }
     }
-
-    var isPagerScrollEnabled:Bool = true{
+    
+    /// A Boolean value that determines whether scrolling is enabled.
+    var isPagerScrollEnabled: Bool = true{
         didSet{
             containerScrollView.isScrollEnabled = isPagerScrollEnabled
         }
     }
     
-    let settings = AMSettings()
+    /// The color of the line in the tab.
+    var lineColor: UIColor? {
+        get {
+            return line.backgroundColor
+        }
+        set {
+            line.backgroundColor = newValue
+        }
+    }
     
-
-    
-    private var tabButtons:[AMTabButton] = []
-    private var line = AMLineView()
-    private var lastSelectedViewIndex = 0
-    
-
     
     // MARK: ViewController lifecycle
 
@@ -66,13 +81,32 @@ class AMPagerTabsViewController: UIViewController {
         
         initScrollView()
         
-        updateScrollViewsFrame()
-        
+        updateScrollViewsFrames()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        childViewControllers.forEach { $0.beginAppearanceTransition(true, animated: animated) }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        updateScrollViewsFrame()
+        
+        updateScrollViewsFrames()
+        childViewControllers.forEach { $0.endAppearanceTransition() }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        childViewControllers.forEach { $0.beginAppearanceTransition(false, animated: animated) }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        childViewControllers.forEach { $0.endAppearanceTransition() }
     }
     
     
@@ -87,10 +121,11 @@ class AMPagerTabsViewController: UIViewController {
     }
 
     
-    func initScrollView(){
+    private func initScrollView() {
+        
         tabScrollView = UIScrollView(frame: CGRect.zero)
         tabScrollView.backgroundColor = settings.tabBackgroundColor
-        tabScrollView.bounces = true
+        tabScrollView.bounces = false
         tabScrollView.showsVerticalScrollIndicator = false
         tabScrollView.showsHorizontalScrollIndicator = false
 
@@ -108,17 +143,24 @@ class AMPagerTabsViewController: UIViewController {
         self.view.addSubview(tabScrollView)
     }
     
-    func addTabButtons(){
+    private func addTabButtons() {
+        
         let viewWidth = self.view.frame.size.width
         let viewControllerCount = CGFloat(viewControllers.count)
+        // Devide the width of the view between the tabs
         var width = viewWidth / viewControllerCount
-        if !isTabButtonShouldFit && viewWidth < (viewControllerCount * settings.initialTabWidth) {
+        let widthOfAllTabs = (viewControllerCount * settings.initialTabWidth)
+        if !isTabButtonShouldFit && viewWidth < widthOfAllTabs {
             width = settings.initialTabWidth
         }
         
         for i in 0..<viewControllers.count {
             let tabButton = AMTabButton(frame: CGRect(x: width*CGFloat(i), y: 0, width: width, height: settings.tabHeight))
-            tabButton.setTitle(viewControllers[i].title, for: .normal)
+            let title = viewControllers[i].title
+            if title == nil {
+                assertionFailure("You need to set a title for the view contoller \(String(describing: viewControllers[i])) , index: \(i)")
+            }
+            tabButton.setTitle(title , for: .normal)
             tabButton.backgroundColor = settings.tabButtonColor
             tabButton.setTitleColor(settings.tabButtonTitleColor, for: .normal)
             tabButton.titleLabel?.font = tabFont
@@ -128,44 +170,42 @@ class AMPagerTabsViewController: UIViewController {
             tabButtons.append(tabButton)
         }
         
-        tabScrollView.contentSize = CGSize(width: width*viewControllerCount, height: settings.tabHeight)
         line.frame = tabButtons.first!.frame
-        line.backgroundColor = UIColor.white
+        line.backgroundColor = lineColor ?? UIColor.white
         tabScrollView.addSubview(line)
-        
     }
     
     // MARK: Controlling tabs
-    
-    func moveToViewContollerAt(index:Int){
-        let contoller = viewControllers[index]
-        
-        if contoller.view?.superview == nil {
-            addChildViewController(contoller)
-            contoller.view?.frame = CGRect(x:  self.view.frame.size.width*CGFloat(index), y: 0, width:  self.view.frame.size.width, height: containerScrollView.frame.size.height)
-            containerScrollView.addSubview(contoller.view)
-            contoller.didMove(toParentViewController: self)
-        }
-        
-        containerScrollView.contentSize = CGSize(width: self.view.frame.size.width*CGFloat(viewControllers.count), height: containerScrollView.frame.size.height)
 
-        delegate?.tabDidChangeAt(index)
+    @objc private func tabClicked(sender: AMTabButton){
+        
+        moveToViewContollerAt(index: sender.index!)
     }
     
-    
-    @objc func tabClicked(sender:AMTabButton){
-        moveTo(index: sender.index!)
-    }
-    
-    func moveTo(index:Int){
+    /// Move the view controller to the passed index
+    ///
+    /// - parameter index: The index of the view controller to show
+    func moveToViewContollerAt(index: Int) {
+        
+        lastSelectedViewIndex = index
+        
         let barButton = tabButtons[index]
         animateLineTo(frame: barButton.frame)
-        lastSelectedViewIndex = index
-        moveToViewContollerAt(index: index)
-        changeTabTo(index: index)
+        
+        let contoller = viewControllers[index]
+        if contoller.view?.superview == nil {
+            addChildViewController(contoller)
+            containerScrollView.addSubview(contoller.view)
+            contoller.didMove(toParentViewController: self)
+            updateSizes()
+        }
+        
+        changeShowingControllerTo(index: index)
+        
+        delegate?.tabDidChangeTo(index)
     }
     
-    func changeTabTo(index:Int){
+    private func changeShowingControllerTo(index: Int) {
         containerScrollView.setContentOffset(CGPoint(x: self.view.frame.size.width*(CGFloat(index)), y: 0), animated: true)
     }
     
@@ -173,7 +213,8 @@ class AMPagerTabsViewController: UIViewController {
 
     // MARK: Animation
 
-    func animateLineTo(frame:CGRect){
+    private func animateLineTo(frame: CGRect) {
+        
         UIView.animate(withDuration: 0.5) {
             self.line.frame = frame
             self.line.draw(frame)
@@ -182,15 +223,15 @@ class AMPagerTabsViewController: UIViewController {
     
     // MARK: Setup Sizes
 
-    func updateScrollViewsFrame() {
+    private func updateScrollViewsFrames() {
 
         tabScrollView.frame = CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: settings.tabHeight)
         containerScrollView.frame = CGRect(x: 0, y: settings.tabHeight, width: self.view.frame.size.width, height: self.view.frame.size.height - settings.tabHeight)
     }
     
-    func updateSizes(){
+    private func updateSizes() {
         
-        updateScrollViewsFrame()
+        updateScrollViewsFrames()
         
         let width = self.view.frame.size.width
         let viewWidth = self.view.frame.size.width
@@ -210,60 +251,64 @@ class AMPagerTabsViewController: UIViewController {
         containerScrollView.contentSize = CGSize(width: width*viewControllerCount, height: containerScrollView.frame.size.height)
         tabScrollView.contentSize = CGSize(width: tabWidth*viewControllerCount, height: settings.tabHeight)
         
-        changeTabTo(index: lastSelectedViewIndex)
+        changeShowingControllerTo(index: lastSelectedViewIndex)
         
         animateLineTo(frame: tabButtons[lastSelectedViewIndex].frame)
-        
-        
     }
     
-    func checkIfCanChangeValue(withErrorMessage message:String){
+    private func checkIfCanChangeValue(withErrorMessage message:String) {
+        
         if viewControllers.count != 0 {
             assertionFailure(message)
         }
     }
-    
-
 }
 
 
 // MARK: UIScrollViewDelegate
-extension AMPagerTabsViewController:UIScrollViewDelegate{
+extension AMPagerTabsViewController:UIScrollViewDelegate {
     
     var currentPage: Int {
+        
         return Int((containerScrollView.contentOffset.x + (0.5*containerScrollView.frame.size.width))/containerScrollView.frame.width)
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        
         if decelerate == false {
-            moveTo(index: currentPage)
+            moveToViewContollerAt(index: currentPage)
         }
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        moveTo(index: currentPage)
+        
+        moveToViewContollerAt(index: currentPage)
     }
     
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
 
     }
-    
 }
 
 class AMSettings{
-    var tabBackgroundColor = #colorLiteral(red: 0.2819149196, green: 0.7462226748, blue: 0.6821211576, alpha: 1)
-    var tabButtonColor = #colorLiteral(red: 0.2819149196, green: 0.7462226748, blue: 0.6821211576, alpha: 1)
+    
+    var tabBackgroundColor = #colorLiteral(red: 0.1568627451, green: 0.6588235294, blue: 0.8901960784, alpha: 1)
+    var tabButtonColor = #colorLiteral(red: 0.1568627451, green: 0.6588235294, blue: 0.8901960784, alpha: 1)
     var tabButtonTitleColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
     var pagerBackgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
     
     var initialTabWidth:CGFloat = 100
     var tabHeight:CGFloat = 60
-    
 }
 
 // MARK: AMTabViewControllerDelegate
 
+/// The delegate of the `AMPagerTabsViewController` contoller must
+/// adopt the `AMPagerTabsViewControllerDelegate` protocol to get notfiy when tab change
 protocol AMPagerTabsViewControllerDelegate {
-    func tabDidChangeAt(_ index:Int);
+    /// Tells the delegate that the tab changed to `index`
+    ///
+    /// - parameter index: The index of the current view controller
+    func tabDidChangeTo(_ index:Int);
 }
 

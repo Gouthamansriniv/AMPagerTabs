@@ -1,24 +1,24 @@
 //
 //  AMTabButton.swift
-//  EMS
+//  AMPagerTabs
 //
 //  Created by abedalkareem omreyh on 10/27/17.
-//  Copyright © 2017 sdvision. All rights reserved.
+//  Copyright © 2017 abedalkareem omreyh. All rights reserved.
+//  GitHub: https://github.com/Abedalkareem/AMPagerTabs
 //
 
 import UIKit
 
 class AMTabButton: UIButton {
     
-    
-    var index:Int?
+    var index: Int?
 
     override func draw(_ rect: CGRect) {
         addTabSeparatorLine()
     }
     
-    func addTabSeparatorLine(){
-        let gradientMaskLayer:CAGradientLayer = CAGradientLayer()
+    private func addTabSeparatorLine(){
+        let gradientMaskLayer: CAGradientLayer = CAGradientLayer()
         gradientMaskLayer.frame = self.bounds
         gradientMaskLayer.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
         gradientMaskLayer.locations = [0.0, 0.5]

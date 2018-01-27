@@ -16,11 +16,11 @@ class ViewController: AMPagerTabsViewController {
         super.viewDidLoad()
 
         
-        self.settings.tabBackgroundColor = #colorLiteral(red: 0.2819149196, green: 0.7462226748, blue: 0.6821211576, alpha: 1)
-        self.settings.tabButtonColor = #colorLiteral(red: 0.2819149196, green: 0.7462226748, blue: 0.6821211576, alpha: 1)
+        settings.tabBackgroundColor = #colorLiteral(red: 0.2819149196, green: 0.7462226748, blue: 0.6821211576, alpha: 1)
+        settings.tabButtonColor = #colorLiteral(red: 0.2819149196, green: 0.7462226748, blue: 0.6821211576, alpha: 1)
         
-        self.tabFont = UIFont.systemFont(ofSize: 17, weight: .bold)
-
+        tabFont = UIFont.systemFont(ofSize: 17, weight: .bold)
+        
         self.viewControllers = getTabs()
 
 
